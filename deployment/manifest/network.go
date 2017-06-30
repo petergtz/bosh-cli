@@ -1,9 +1,8 @@
 package manifest
 
 import (
-	"encoding/hex"
-	"fmt"
 	"net"
+	"strings"
 
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 	biproperty "github.com/cloudfoundry/bosh-utils/property"
@@ -54,12 +53,8 @@ func (n Network) Interface(staticIPs []string, networkDefaults []NetworkDefault)
 		if err != nil {
 			return biproperty.Map{}, bosherr.WrapError(err, "Failed to parse subnet range")
 		}
-		ipParts, err := hex.DecodeString(ipNet.Mask.String())
-		if err != nil {
-			return biproperty.Map{}, bosherr.WrapError(err, "Failed to convert subnet range to IP string")
-		}
-		networkInterface["netmask"] = fmt.Sprintf("%v.%v.%v.%v", ipParts[0], ipParts[1], ipParts[2], ipParts[3])
 
+		networkInterface["netmask"] = ipMaskString(ipNet.Mask)
 		networkInterface["cloud_properties"] = n.Subnets[0].CloudProperties
 	} else {
 		networkInterface["cloud_properties"] = n.CloudProperties
@@ -78,4 +73,20 @@ func (n Network) Interface(staticIPs []string, networkDefaults []NetworkDefault)
 	}
 
 	return networkInterface, nil
+}
+
+func ipMaskString(ipMask net.IPMask) string {
+	ip := net.IP(ipMask)
+
+	if p4 := ip.To4(); len(p4) == net.IPv4len {
+		return ip.String()
+	}
+
+	mask := ipMask.String()
+	ipv6Pieces := []string{}
+	for i := 0; i < 8; i++ {
+		ipv6Pieces = append(ipv6Pieces, mask[i*4:(i+1)*4])
+	}
+
+	return strings.Join(ipv6Pieces, ":")
 }
