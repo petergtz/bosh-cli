@@ -59,6 +59,9 @@ type BoshOpts struct {
 	Locks   LocksOpts   `command:"locks"    description:"List current locks"`
 	CleanUp CleanUpOpts `command:"clean-up" description:"Clean up releases, stemcells, disks, etc."`
 
+	// Config
+	Config ConfigOpts `command:"config" alias:"c" description:"Show current config"`
+
 	// Cloud config
 	CloudConfig       CloudConfigOpts       `command:"cloud-config"        alias:"cc"  description:"Show current cloud config"`
 	UpdateCloudConfig UpdateCloudConfigOpts `command:"update-cloud-config" alias:"ucc" description:"Update current cloud config"`
@@ -285,6 +288,11 @@ type InterpolateOpts struct {
 
 type InterpolateArgs struct {
 	Manifest FileBytesArg `positional-arg-name:"PATH" description:"Path to a template that will be interpolated"`
+}
+
+// Config
+type ConfigOpts struct {
+	cmd
 }
 
 // Cloud config

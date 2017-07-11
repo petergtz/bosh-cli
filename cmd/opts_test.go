@@ -291,6 +291,14 @@ var _ = Describe("Opts", func() {
 			})
 		})
 
+		Describe("Config", func() {
+			It("contains desired values", func() {
+				Expect(getStructTagForName("Config", opts)).To(Equal(
+					`command:"config" alias:"c" description:"Show current config"`,
+				))
+			})
+		})
+
 		Describe("CloudConfig", func() {
 			It("contains desired values", func() {
 				Expect(getStructTagForName("CloudConfig", opts)).To(Equal(
