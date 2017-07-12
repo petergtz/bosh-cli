@@ -842,6 +842,42 @@ var _ = Describe("Opts", func() {
 		})
 	})
 
+	Describe("ConfigOpts", func() {
+		var opts *ConfigOpts
+
+		BeforeEach(func() {
+			opts = &ConfigOpts{}
+		})
+
+		Describe("Args", func() {
+			It("contains desired values", func() {
+				Expect(getStructTagForName("Args", opts)).To(Equal(`positional-args:"true" required:"true"`))
+			})
+		})
+
+		Describe("Name", func() {
+			It("contains desired values", func() {
+				Expect(getStructTagForName("Name", opts)).To(Equal(`long:"name" description:"Config name (default: '')" default:""`))
+			})
+		})
+	})
+
+	Describe("ConfigArgs", func() {
+		var opts *ConfigArgs
+
+		BeforeEach(func() {
+			opts = &ConfigArgs{}
+		})
+
+		Describe("Type", func() {
+			It("contains desired values", func() {
+				Expect(getStructTagForName("Type", opts)).To(Equal(
+					`positional-arg-name:"TYPE"`,
+				))
+			})
+		})
+	})
+
 	Describe("TaskOpts", func() {
 		var opts *TaskOpts
 

@@ -14,8 +14,8 @@ func NewConfigCmd(ui boshui.UI, director boshdir.Director) ConfigCmd {
 	return ConfigCmd{ui: ui, director: director}
 }
 
-func (c ConfigCmd) Run() error {
-	config, err := c.director.LatestConfig()
+func (c ConfigCmd) Run(opts ConfigOpts) error {
+	config, err := c.director.LatestConfig(opts.Args.Type, opts.Name)
 	if err != nil {
 		return err
 	}

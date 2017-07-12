@@ -43,7 +43,7 @@ type Director interface {
 	UploadStemcellURL(url, sha1 string, fix bool) error
 	UploadStemcellFile(file UploadFile, fix bool) error
 
-	LatestConfig() (Config, error)
+	LatestConfig(configType string, name string) (Config, error)
 
 	LatestCloudConfig() (CloudConfig, error)
 	UpdateCloudConfig([]byte) error

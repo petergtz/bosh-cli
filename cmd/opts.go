@@ -292,7 +292,14 @@ type InterpolateArgs struct {
 
 // Config
 type ConfigOpts struct {
+	Args ConfigArgs `positional-args:"true" required:"true"`
+	Name string     `long:"name" description:"Config name (default: '')" default:""`
+
 	cmd
+}
+
+type ConfigArgs struct {
+	Type string `positional-arg-name:"TYPE"`
 }
 
 // Cloud config

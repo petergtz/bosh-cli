@@ -222,7 +222,7 @@ func (c Cmd) Execute() (cmdErr error) {
 		return NewInterpolateCmd(deps.UI).Run(*opts)
 
 	case *ConfigOpts:
-		return NewConfigCmd(deps.UI, c.director()).Run()
+		return NewConfigCmd(deps.UI, c.director()).Run(*opts)
 
 	case *CloudConfigOpts:
 		return NewCloudConfigCmd(deps.UI, c.director()).Run()

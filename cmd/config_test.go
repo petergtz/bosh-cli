@@ -26,7 +26,18 @@ var _ = Describe("ConfigCmd", func() {
 	})
 
 	Describe("Run", func() {
-		act := func() error { return command.Run() }
+		var (
+			opts ConfigOpts
+		)
+
+		BeforeEach(func() {
+			opts = ConfigOpts{
+				Args: ConfigArgs{Type: "my-type"},
+				Name: "",
+			}
+		})
+
+		act := func() error { return command.Run(opts) }
 
 		It("shows config", func() {
 			config := boshdir.Config{

@@ -1,15 +1,18 @@
 package director
 
 import (
+	"fmt"
+
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
+	gourl "net/url"
 )
 
 type Config struct {
 	Content string
 }
 
-func (d DirectorImpl) LatestConfig() (Config, error) {
-	resps, err := d.client.Configs()
+func (d DirectorImpl) LatestConfig(t string, name string) (Config, error) {
+	resps, err := d.client.Configs(t, name)
 
 	if err != nil {
 		return Config{}, err
@@ -22,10 +25,16 @@ func (d DirectorImpl) LatestConfig() (Config, error) {
 	return resps[0], nil
 }
 
-func (c Client) Configs() ([]Config, error) {
+func (c Client) Configs(t string, name string) ([]Config, error) {
 	var resps []Config
 
-	err := c.clientRequest.Get("/configs?limit=1", &resps)
+	query := gourl.Values{}
+	query.Add("type", t)
+	query.Add("name", name)
+	query.Add("limit", "1")
+	path := fmt.Sprintf("/configs?%s", query.Encode())
+
+	err := c.clientRequest.Get(path, &resps)
 	if err != nil {
 		return resps, bosherr.WrapErrorf(err, "Finding configs")
 	}
