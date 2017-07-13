@@ -25,14 +25,13 @@ func (d DirectorImpl) LatestConfig(t string, name string) (Config, error) {
 	return resps[0], nil
 }
 
-func (c Client) Configs(t string, name string) ([]Config, error) {
+func (c Client) Configs(configType string, name string) ([]Config, error) {
 	var resps []Config
 
 	query := gourl.Values{}
-	query.Add("type", t)
 	query.Add("name", name)
 	query.Add("limit", "1")
-	path := fmt.Sprintf("/configs?%s", query.Encode())
+	path := fmt.Sprintf("/configs/%s?%s", configType, query.Encode())
 
 	err := c.clientRequest.Get(path, &resps)
 	if err != nil {

@@ -3,9 +3,9 @@ package director_test
 import (
 	"net/http"
 
+	. "github.com/cloudfoundry/bosh-cli/director"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/cloudfoundry/bosh-cli/director"
 
 	"github.com/onsi/gomega/ghttp"
 )
@@ -28,7 +28,7 @@ var _ = Describe("Director", func() {
 		It("returns latest config if there is at least one", func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/configs", "type=my-type&name=&limit=1"),
+					ghttp.VerifyRequest("GET", "/configs/my-type", "name=&limit=1"),
 					ghttp.VerifyBasicAuth("username", "password"),
 					ghttp.RespondWith(http.StatusOK, `[{"content": "first"}]`),
 				),
@@ -42,7 +42,7 @@ var _ = Describe("Director", func() {
 		It("returns error if there is no config", func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/configs", "type=my-type&name=&limit=1"),
+					ghttp.VerifyRequest("GET", "/configs/my-type", "name=&limit=1"),
 					ghttp.VerifyBasicAuth("username", "password"),
 					ghttp.RespondWith(http.StatusOK, `[]`),
 				),
@@ -56,7 +56,7 @@ var _ = Describe("Director", func() {
 		It("returns error if there is no config", func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/configs", "type=fake-type&name=&limit=1"),
+					ghttp.VerifyRequest("GET", "/configs/fake-type", "name=&limit=1"),
 					ghttp.VerifyBasicAuth("username", "password"),
 					ghttp.RespondWith(http.StatusOK, `[]`),
 				),
@@ -68,7 +68,7 @@ var _ = Describe("Director", func() {
 		})
 
 		It("returns error if info response in non-200", func() {
-			AppendBadRequest(ghttp.VerifyRequest("GET", "/configs"), server)
+			AppendBadRequest(ghttp.VerifyRequest("GET", "/configs/fake-type"), server)
 
 			_, err := director.LatestConfig("fake-type", "")
 			Expect(err).To(HaveOccurred())
