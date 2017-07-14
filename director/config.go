@@ -2,6 +2,7 @@ package director
 
 import (
 	"fmt"
+	"net/http"
 
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 	gourl "net/url"
@@ -25,6 +26,10 @@ func (d DirectorImpl) LatestConfig(t string, name string) (Config, error) {
 	return resps[0], nil
 }
 
+func (d DirectorImpl) UpdateConfig(t string, name string, content []byte) error {
+	return d.client.UpdateConfig(t, name, content)
+}
+
 func (c Client) Configs(configType string, name string) ([]Config, error) {
 	var resps []Config
 
@@ -39,4 +44,21 @@ func (c Client) Configs(configType string, name string) ([]Config, error) {
 	}
 
 	return resps, nil
+}
+
+func (c Client) UpdateConfig(configType string, name string, content []byte) error {
+	query := gourl.Values{}
+	query.Add("name", name)
+	path := fmt.Sprintf("/configs/%s?%s", configType, query.Encode())
+
+	setHeaders := func(req *http.Request) {
+		req.Header.Add("Content-Type", "text/yaml")
+	}
+
+	_, _, err := c.clientRequest.RawPost(path, content, setHeaders)
+	if err != nil {
+		return bosherr.WrapErrorf(err, "Updating config")
+	}
+
+	return nil
 }

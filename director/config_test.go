@@ -76,4 +76,31 @@ var _ = Describe("Director", func() {
 				"Finding configs: Director responded with non-successful status code"))
 		})
 	})
+
+	Describe("UploadConfig", func() {
+		It("updates config", func() {
+			server.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("POST", "/configs/fake-type", "name="),
+					ghttp.VerifyBasicAuth("username", "password"),
+					ghttp.VerifyHeader(http.Header{
+						"Content-Type": []string{"text/yaml"},
+					}),
+					ghttp.RespondWith(http.StatusOK, `{}`),
+				),
+			)
+
+			err := director.UpdateConfig("fake-type", "", []byte("---"))
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns error if response is not 200", func() {
+			AppendBadRequest(ghttp.VerifyRequest("POST", "/configs/fake-type"), server)
+
+			err := director.UpdateConfig("fake-type", "", nil)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring(
+				"Updating config: Director responded with non-successful status code"))
+		})
+	})
 })

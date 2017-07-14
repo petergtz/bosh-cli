@@ -44,6 +44,7 @@ type Director interface {
 	UploadStemcellFile(file UploadFile, fix bool) error
 
 	LatestConfig(configType string, name string) (Config, error)
+	UpdateConfig(configType string, name string, content []byte) error
 
 	LatestCloudConfig() (CloudConfig, error)
 	UpdateCloudConfig([]byte) error

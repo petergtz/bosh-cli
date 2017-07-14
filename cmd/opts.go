@@ -60,7 +60,8 @@ type BoshOpts struct {
 	CleanUp CleanUpOpts `command:"clean-up" description:"Clean up releases, stemcells, disks, etc."`
 
 	// Config
-	Config ConfigOpts `command:"config" alias:"c" description:"Show current config"`
+	Config       ConfigOpts       `command:"config" alias:"c" description:"Show current config"`
+	UpdateConfig UpdateConfigOpts `command:"update-config" alias:"uc" description:"Update current config"`
 
 	// Cloud config
 	CloudConfig       CloudConfigOpts       `command:"cloud-config"        alias:"cc"  description:"Show current cloud config"`
@@ -300,6 +301,19 @@ type ConfigOpts struct {
 
 type ConfigArgs struct {
 	Type string `positional-arg-name:"TYPE"`
+}
+
+type UpdateConfigOpts struct {
+	Args UpdateConfigArgs `positional-args:"true" required:"true"`
+	Name string           `long:"name" description:"Config name (default: '')" default:""`
+	VarFlags
+	OpsFlags
+	cmd
+}
+
+type UpdateConfigArgs struct {
+	Type   string       `positional-arg-name:"TYPE"`
+	Config FileBytesArg `positional-arg-name:"PATH" description:"Path to a YAML config file"`
 }
 
 // Cloud config

@@ -299,6 +299,14 @@ var _ = Describe("Opts", func() {
 			})
 		})
 
+		Describe("UpdateConfig", func() {
+			It("contains desired values", func() {
+				Expect(getStructTagForName("UpdateConfig", opts)).To(Equal(
+					`command:"update-config" alias:"uc" description:"Update current config"`,
+				))
+			})
+		})
+
 		Describe("CloudConfig", func() {
 			It("contains desired values", func() {
 				Expect(getStructTagForName("CloudConfig", opts)).To(Equal(
@@ -874,6 +882,41 @@ var _ = Describe("Opts", func() {
 				Expect(getStructTagForName("Type", opts)).To(Equal(
 					`positional-arg-name:"TYPE"`,
 				))
+			})
+		})
+	})
+
+	Describe("UpdateConfigOpts", func() {
+		var opts *UpdateConfigOpts
+
+		BeforeEach(func() {
+			opts = &UpdateConfigOpts{}
+		})
+
+		Describe("Args", func() {
+			It("contains desired values", func() {
+				Expect(getStructTagForName("Args", opts)).To(Equal(`positional-args:"true" required:"true"`))
+			})
+		})
+
+		Describe("Name", func() {
+			It("contains desired values", func() {
+				Expect(getStructTagForName("Name", opts)).To(Equal(`long:"name" description:"Config name (default: '')" default:""`))
+			})
+		})
+	})
+
+	Describe("UpdateConfigArgs", func() {
+		var opts *UpdateConfigArgs
+
+		BeforeEach(func() {
+			opts = &UpdateConfigArgs{}
+		})
+
+		Describe("Type", func() {
+			It("contains desired values", func() {
+				Expect(getStructTagForName("Type", opts)).To(Equal(`positional-arg-name:"TYPE"`))
+				Expect(getStructTagForName("Config", opts)).To(Equal(`positional-arg-name:"PATH" description:"Path to a YAML config file"`))
 			})
 		})
 	})

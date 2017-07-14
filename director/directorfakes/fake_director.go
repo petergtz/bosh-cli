@@ -325,6 +325,19 @@ type FakeDirector struct {
 		result1 director.Config
 		result2 error
 	}
+	UpdateConfigStub        func(configType string, name string, content []byte) error
+	updateConfigMutex       sync.RWMutex
+	updateConfigArgsForCall []struct {
+		configType string
+		name       string
+		content    []byte
+	}
+	updateConfigReturns struct {
+		result1 error
+	}
+	updateConfigReturnsOnCall map[int]struct {
+		result1 error
+	}
 	LatestCloudConfigStub        func() (director.CloudConfig, error)
 	latestCloudConfigMutex       sync.RWMutex
 	latestCloudConfigArgsForCall []struct{}
@@ -1705,6 +1718,61 @@ func (fake *FakeDirector) LatestConfigReturnsOnCall(i int, result1 director.Conf
 	}{result1, result2}
 }
 
+func (fake *FakeDirector) UpdateConfig(configType string, name string, content []byte) error {
+	var contentCopy []byte
+	if content != nil {
+		contentCopy = make([]byte, len(content))
+		copy(contentCopy, content)
+	}
+	fake.updateConfigMutex.Lock()
+	ret, specificReturn := fake.updateConfigReturnsOnCall[len(fake.updateConfigArgsForCall)]
+	fake.updateConfigArgsForCall = append(fake.updateConfigArgsForCall, struct {
+		configType string
+		name       string
+		content    []byte
+	}{configType, name, contentCopy})
+	fake.recordInvocation("UpdateConfig", []interface{}{configType, name, contentCopy})
+	fake.updateConfigMutex.Unlock()
+	if fake.UpdateConfigStub != nil {
+		return fake.UpdateConfigStub(configType, name, content)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fake.updateConfigReturns.result1
+}
+
+func (fake *FakeDirector) UpdateConfigCallCount() int {
+	fake.updateConfigMutex.RLock()
+	defer fake.updateConfigMutex.RUnlock()
+	return len(fake.updateConfigArgsForCall)
+}
+
+func (fake *FakeDirector) UpdateConfigArgsForCall(i int) (string, string, []byte) {
+	fake.updateConfigMutex.RLock()
+	defer fake.updateConfigMutex.RUnlock()
+	return fake.updateConfigArgsForCall[i].configType, fake.updateConfigArgsForCall[i].name, fake.updateConfigArgsForCall[i].content
+}
+
+func (fake *FakeDirector) UpdateConfigReturns(result1 error) {
+	fake.UpdateConfigStub = nil
+	fake.updateConfigReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeDirector) UpdateConfigReturnsOnCall(i int, result1 error) {
+	fake.UpdateConfigStub = nil
+	if fake.updateConfigReturnsOnCall == nil {
+		fake.updateConfigReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.updateConfigReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeDirector) LatestCloudConfig() (director.CloudConfig, error) {
 	fake.latestCloudConfigMutex.Lock()
 	ret, specificReturn := fake.latestCloudConfigReturnsOnCall[len(fake.latestCloudConfigArgsForCall)]
@@ -2398,6 +2466,8 @@ func (fake *FakeDirector) Invocations() map[string][][]interface{} {
 	defer fake.uploadStemcellFileMutex.RUnlock()
 	fake.latestConfigMutex.RLock()
 	defer fake.latestConfigMutex.RUnlock()
+	fake.updateConfigMutex.RLock()
+	defer fake.updateConfigMutex.RUnlock()
 	fake.latestCloudConfigMutex.RLock()
 	defer fake.latestCloudConfigMutex.RUnlock()
 	fake.updateCloudConfigMutex.RLock()
