@@ -13,6 +13,7 @@ type release struct {
 	name    string
 	version string
 
+	sourceRepoUrl      string
 	commitHash         string
 	uncommittedChanges bool
 
@@ -60,8 +61,9 @@ func (r *release) SetName(name string) { r.name = name }
 func (r *release) Version() string           { return r.version }
 func (r *release) SetVersion(version string) { r.version = version }
 
-func (r *release) SetCommitHash(commitHash string)    { r.commitHash = commitHash }
-func (r *release) SetUncommittedChanges(changes bool) { r.uncommittedChanges = changes }
+func (r *release) SetSourceRepoUrl(sourceRepoUrl string) { r.sourceRepoUrl = sourceRepoUrl }
+func (r *release) SetCommitHash(commitHash string)       { r.commitHash = commitHash }
+func (r *release) SetUncommittedChanges(changes bool)    { r.uncommittedChanges = changes }
 
 func (r *release) CommitHashWithMark(suffix string) string {
 	if r.uncommittedChanges {
@@ -139,6 +141,7 @@ func (r *release) Manifest() birelman.Manifest {
 		Name:    r.name,
 		Version: r.version,
 
+		SourceRepoUrl:      r.sourceRepoUrl,
 		CommitHash:         r.commitHash,
 		UncommittedChanges: r.uncommittedChanges,
 
