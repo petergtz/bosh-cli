@@ -105,5 +105,24 @@ var _ = Describe("UpdateConfigCmd", func() {
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("fake-err"))
 		})
+
+		Context("when uploading an empty YAML document", func() {
+			BeforeEach(func() {
+				opts = UpdateConfigOpts{
+					Args: UpdateConfigArgs{
+						Type:   "my-type",
+						Config: FileBytesArg{Bytes: []byte("---")},
+					},
+					Name: "",
+				}
+			})
+
+			It("returns YAML null", func() {
+				err := act()
+				Expect(err).ToNot(HaveOccurred())
+				_, _, bytes := director.UpdateConfigArgsForCall(0)
+				Expect(bytes).To(Equal([]byte("null\n")))
+			})
+		})
 	})
 })
