@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 )
@@ -167,16 +168,20 @@ func (c Client) CleanUpSSH(deploymentName, jobName, indexOrID string, opts SSHOp
 func (c Client) buildSSHBody(deploymentName, jobName, indexOrID string) map[string]interface{} {
 	target := map[string]interface{}{}
 
-	if len(jobName) > 0 {
-		target["job"] = jobName
-	}
-
-	if len(indexOrID) > 0 {
-		target["indexes"] = []string{indexOrID}
-		target["ids"] = []string{indexOrID}
+	if jobName == "ids" {
+		target["ids"] = strings.Split(indexOrID, ",")
 	} else {
-		target["indexes"] = []string{}
-		target["ids"] = []string{}
+		if len(jobName) > 0 {
+			target["job"] = jobName
+		}
+
+		if len(indexOrID) > 0 {
+			target["indexes"] = []string{indexOrID}
+			target["ids"] = []string{indexOrID}
+		} else {
+			target["indexes"] = []string{}
+			target["ids"] = []string{}
+		}
 	}
 
 	return map[string]interface{}{
